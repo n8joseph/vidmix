@@ -309,6 +309,9 @@ angular.module('vmLibrary', [])
 		}
 	}])
 
+//
+//	DIRECTIVE TO CREATE <YOUTUBE> PLAYERS
+//
 	.directive('youtube', function($window, YT_event, youTubeApiService) {
   return {
     restrict: "E",
@@ -353,8 +356,11 @@ angular.module('vmLibrary', [])
           videoId: scope.videoid, 
 
           events: {
-            'onStateChange': function(event) {
-              
+            'onStateChange': function(event) {       
+
+    //
+	// MAPS YOUTUBE VIDEO EVENTS TO SCOPE MESSAGES
+	//
               var message = {
                 event: YT_event.STATUS_CHANGE,
                 data: ""
@@ -379,8 +385,12 @@ angular.module('vmLibrary', [])
                 scope.$emit(message.event, message.data);
               });
 
+      //
+      // STOPS VIDEO PLAY AT 3 SECONDS
+      //
 			    var time, rate, remainingTime;
-			    clearTimeout(stopPlayTimer);
+			    var stopPlayAt = 3;
+			    // clearTimeout(stopPlayTimer);
 			    if (event.data == YT.PlayerState.PLAYING) {
 			      time = player.getCurrentTime();
 			      // Add .4 of a second to the time in case it's close to the current time
@@ -391,8 +401,11 @@ angular.module('vmLibrary', [])
 			        stopPlayTimer = setTimeout(pauseVideo, remainingTime * 1000);
 			      }
 			    }
+			      function pauseVideo() {
+    			player.pauseVideo();
+ 			 }
 
-			   
+
 
             }
           } 
