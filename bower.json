@@ -1,0 +1,22 @@
+{
+  "name": "rekord",
+  "authors": [
+    "n8joseph"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-gridster": "~0.13.5"
+  }
+}

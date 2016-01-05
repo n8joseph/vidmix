@@ -1,0 +1,64 @@
+
+	
+		<div style="text-align: center; background-color: #F9D731">
+			<img id="logo" src="logo.png">
+			<h1>Vidmix</h1>
+	   </div>
+
+	<div style="text-align: left">
+	   
+	   <form id="search" data-ng-submit="search()">
+	        <input id="query" name="q" type="text" placeholder="Search for a YouTube video" data-ng-model="query"/>
+	        <input id="submit" text="search" type="submit" value="Submit"/>
+	   </form>
+
+		<div id="results">
+		      <div class="video" data-ng-repeat="video in results" data-ng-click="queue(video.id, video.title)">
+		        <img class="video-image" data-ng-src="{{ video.thumbnail }}">
+		        <p class="video-title">{{ video.title }}</p>
+		        <p class="video-author">{{ video.author }}</p>
+		        <p class="video-description">{{ video.description }}</p>
+		      </div>
+		    </div>
+
+		</div>
+
+	<div>
+		 <youtube id="youtube" width="640" height="390" videoid="yOom_hezEKI" control="youtubeControl" style="opacity: 0.5"> </youtube>
+ 		<youtube width="640" height="390" videoid="A3ckIovZRwk" control="youtubeControl" class='vidTwo'> </youtube>
+
+		<br/>
+		<button ng-click="youtubeControl.dropSound()" style="position: relative; top: 400px; left: 40px">Lower volume to 50</button>
+	</div>
+
+
+	<div style="top: 466px; position: absolute">
+
+		<button ng-click="createGrid()" class="bigButton">Create Grid</button>
+
+		<div id="container" style="height: {{ vidDB.length * 40 + 2}}px; width: {{ maxTotalWidth }}px;">
+		    <div ng-repeat="clip in vidDB">
+		        <ng-vid-unit class="shape noOne" ng-draggable='dragOptions' style="top: {{ clip.clipHeightOffset }}px; width: {{ clip.vidLength }}px"><p>{{clip.clipHeightOffset}}</p></ng-vid-unit>
+		        <!--ng-vid-unit class="shape noTwo" ng-draggable='dragOptions'></ng-vid-unit-->
+		    </div>
+		</div>
+
+		<br/>
+
+		<button ng-click="tester()">tester</button>
+		<button ng-click="tester2()">CLICK FIRST</button>
+		<button ng-click="tester3()">tester3</button>
+		<p>clip height offset for vid 2 (obj 1): {{ vidDB[1].clipHeightOffset }}</p>
+		<p>max total width {{ maxTotalWidth }}</p>
+		<p>{{ idArray }}</p>
+			<div id="footnote"></div>
+
+		   <!-- youtube width="640" height="390" videoid="{{ idArray[0] }}" control="youtubeControl"></youtube -->
+
+
+		<br/>
+	</div>
+
+
+
+
