@@ -312,14 +312,15 @@ angular.module('vmLibrary', [])
 //
 //	DIRECTIVE TO CREATE <YOUTUBE> PLAYERS
 //
-	.directive('youtube', function($window, YT_event, youTubeApiService) {
+	.directive('youtube', function($window, $interval, YT_event, youTubeApiService) {
   return {
     restrict: "E",
 
     scope: {
       height: "@",
       width: "@",
-      videoid: "@"
+      videoid: "@",
+      ctrlFn: '&'
     },
 
     template: '<div></div>',
@@ -332,10 +333,16 @@ angular.module('vmLibrary', [])
       
       var player;
 
+      // scope.$watch(attrs.myCurrentTime, function(value) {
+      //   opacity1 = value;
+      //   updateTime();
+      // });
+
       youTubeApiService.onReady(function() {
         player = setupPlayer(scope, element);
       });
 
+ 
       function setupPlayer(scope, element) {
         return new YT.Player(element.children()[0], {
           playerVars: {
@@ -386,13 +393,14 @@ angular.module('vmLibrary', [])
               });
 
       //
-      // STOPS VIDEO PLAY AT 3 SECONDS
+      // STOPS VIDEO PLAY AT 15 SECONDS
       //
 			    var time, rate, remainingTime;
-			    var stopPlayAt = 3;
+			    var stopPlayAt = 15;
 			    // clearTimeout(stopPlayTimer);
 			    if (event.data == YT.PlayerState.PLAYING) {
 			      time = player.getCurrentTime();
+
 			      // Add .4 of a second to the time in case it's close to the current time
 			      // (The API kept returning ~9.7 when hitting play after stopping at 10s)
 			      if (time + .4 < stopPlayAt) {
@@ -404,6 +412,64 @@ angular.module('vmLibrary', [])
 			      function pauseVideo() {
     			player.pauseVideo();
  			 }
+
+
+
+	 		// LOWER OPACITY
+	 			
+	 			var opacity1;
+	 			var fadeStart = 5;
+	 			var fadeEnd = 10;
+	 			var time;
+
+	 			scope.ctrlFn(
+	 				{arg1: opacity1}
+	 				)
+
+		 		// var myVar = setInterval(adjustOpacity, 1000);
+		 		$interval(adjustOpacity, 100, 100)
+		 		
+		 		function adjustOpacity() {
+		 			scope.ctrlFn(
+	 					{arg1: opacity1}
+	 				)
+	 				 
+	 		
+	 				opacity1 = 1 - player.getCurrentTime() / 10;
+	 				 
+
+		 				
+
+		 		}
+	 			
+	 				// console.log("function works")
+		 			//  if (event.data == YT.PlayerState.PLAYING) {
+		 			//  	time = player.getCurrentTime();
+		 			//  	console.log("1st IF")
+		 			//  	console.log(time + " =time")
+		 			//  	console.log(fadeStart + " =fadestart")
+		 			//  	if (time == fadeStart) {
+		 			//  		console.log("2nd IF")
+		 			 		
+		 			//  		for (i = 0; i = fadeEnd - fadeStart; i++) {
+		 			//  			opacity1 -= 1 / (fadeEnd - fadeStart);
+		 			//  			console.log('fading')
+		 			//  		}
+		 			//  	}
+		 			//  }
+		 		
+
+		 		// scope.$watch(player.getCurrentTime(), function() {
+		 		// 	console.log("1st IF");
+		 		// 	time = player.getCurrentTime();
+
+		 		// })
+		 		// 	if (time == fadeStart) {
+		 		// 	 	console.log("2nd IF")
+		 		// 	}
+
+
+
 
 
 

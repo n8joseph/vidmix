@@ -2,7 +2,7 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 	
 
 
-	.controller('MainCtrl', ['$scope', 'VidLength', '$http', '$log', 'VideosService', 'API_KEY', function($scope, VidLength, $http, $log, VideosService, API_KEY) {
+	.controller('MainCtrl', ['$scope', 'VidLength', '$http', '$log', '$interval', 'VideosService', 'API_KEY', function($scope, VidLength, $http, $log, $interval, VideosService, API_KEY) {
 
        var idArray = ['A3ckIovZRwk', 'yOom_hezEKI', 'PAgY5MqpUq4']
        var myid = 'A3ckIovZRwk';
@@ -11,6 +11,23 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
        var vidDB = [];
        var maxTotalWidth = 0;
        $scope.maxTotalWidth = 0;
+       var opacity1;
+       
+       $scope.opacityChange = function(arg1) {
+       	
+			console.log("opacityChange function ran successfully with arg1=" + arg1);
+			opacity1 = arg1;
+
+
+       }	
+       
+			$interval(myTimer, 100, 100);
+
+			function myTimer() {
+				$scope.opacity1 = opacity1; 
+				console.log("$scope.opacity1 is: " + $scope.opacity1)
+				
+			}
        
        
 
@@ -79,6 +96,7 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			}
 			$scope.vidDB = vidDB;
 
+
 			setMaxTotalWidth();
 			// showContainer();
 
@@ -93,6 +111,8 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 		$scope.youtubeControl = {};
 		$scope.vidDB = [];
 		$scope.showContainer = "none";
+
+		$scope.vidDB_length = $scope.vidDB.length;
 
 		
 		
@@ -112,11 +132,15 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			};
 			for (i = 0; i < idArray.length; i++) {
 				VidLength.fetchURL(idArray[i]).then(makeHandle(i));
+				clipHeightOffsetArray.push(40 * (clipHeightOffsetArray.length));
 			}
+			// createGrid();
+			console.log(clipHeightOffsetArray)
 
 		}
 
 		$scope.tester2 = function() {
+			
 			var myPromise = function() {
 				var deferred = $q.defer();
 				promise.then(function(res) {
@@ -125,9 +149,8 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			}
 			
 
+			idArray.push('IQBC5URoF0s');
 
-
-			idArray.push('IQBC5URoF0s')
 			addLengths();
 			// createGrid();
 

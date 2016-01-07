@@ -25,7 +25,7 @@
 
 	<div>
 		 
-		 <youtube width="640" height="390" videoid="yOom_hezEKI" control="youtubeControl" style="opacity: 0.5"> </youtube>
+		 <youtube ctrl-fn="opacityChange(arg1)" style="opacity: {{ opacity1 }}" width="640" height="390" videoid="yOom_hezEKI" control="youtubeControl"> </youtube>
  		<youtube width="640" height="390" videoid="A3ckIovZRwk" control="youtubeControl" class='vidTwo'> </youtube>
 
 		<br/>
@@ -51,7 +51,10 @@
 		<button ng-click="tester3()">tester3</button>
 		<p>clip height offset for vid 2 (obj 1): {{ vidDB[1].clipHeightOffset }}</p>
 		<p>max total width {{ maxTotalWidth }}</p>
-		<p>{{ idArray }}</p>
+		<p>Id Array: {{ idArray }}</p>
+		<p>Length Array: {{ lengthArray }}</p>
+		<p>VidDb length: {{ vidDB_length }} </p>
+		<p>VidDB: {{ vidDB }}</p>
 			<div id="footnote"></div>
 
 		   <!-- youtube width="640" height="390" videoid="{{ idArray[0] }}" control="youtubeControl"></youtube -->

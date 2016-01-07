@@ -79,11 +79,57 @@ youtube {
 
 #query{ border: none; color: #000000; background-float: left; height: 30px; padding-left: 10px; line-height: 30px;  width: 590px;}
 #query:focus{ outline: none;}
-#submit{ position: absolute; right: 10px; top: 5px;}
+#submit{ position: absolute; right: 0px; top: 0px;}
 #search{ float: left; height: 40px; position: relative; width: 600px;}
+
+button {
+
+  width: 100px;
+  height: 40px;
+  appearance: none;
+  box-shadow: none;
+  border-radius: 0;
+  border: 0px;
+  background-color: RGBA(98, 100, 98, 0.4);
+  font-family: 'Jura', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+button:focus, #submit:focus {
+  outline: 0;
+
+}
+
+button:hover, #submit:hover {
+  background-color: RGBA(98, 100, 98, 0.6);
+
+}
+
+#submit {
+
+  width: 100px;
+  height: 30px;
+  appearance: none;
+  box-shadow: none;
+  border-radius: 0;
+  border: 0px;
+  background-color: RGBA(98, 100, 98, 0.4);
+  font-family: 'Jura', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+
+}
+
+#query {
+  font-family: 'Jura', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+}
 
 .bigButton {
   margin: 20px 0px 20px 501px;
   width: 100px;
   height: 40px;
+
 }
