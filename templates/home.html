@@ -37,7 +37,21 @@
 
 		<button ng-click="createGrid()" class="bigButton">Create Grid</button>
 
+		<div class="vid_wrap">
+		  <ng-vid-unit class="shape noOne" ng-draggable='dragOptions' style="top: 50px; width: 200px"><p></p></ng-vid-unit>
+     
+          <span>Titile of Video</span>
+          
+          <div class="button_wrap">
+            <span>edit</span>
+            <span>delete</span> 
+		   </div><!-- .button_wrap - -->
+
+		 </div><!-- . vid_wrap - -->
+
 		<div id="container" style="height: {{ vidDB.length * 40 + 2}}px; width: {{ maxTotalWidth }}px;">
+
+
 		    <div ng-repeat="clip in vidDB">
 		        <ng-vid-unit class="shape noOne" ng-draggable='dragOptions' style="top: {{ clip.clipHeightOffset }}px; width: {{ clip.vidLength }}px"><p>{{clip.clipHeightOffset}}</p></ng-vid-unit>
 		        <!--ng-vid-unit class="shape noTwo" ng-draggable='dragOptions'></ng-vid-unit-->

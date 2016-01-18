@@ -422,23 +422,28 @@ angular.module('vmLibrary', [])
 	 			var fadeEnd = 10;
 	 			var time;
 
-	 			scope.ctrlFn(
-	 				{arg1: opacity1}
-	 				)
+	 			// scope.ctrlFn({
+	 			// 	arg1: opacity1,
+	 			// 	arg2: initialRun
+	 			// 	})
 
 		 		// var myVar = setInterval(adjustOpacity, 1000);
 		 		$interval(adjustOpacity, 100, 100)
 		 		
+
+
 		 		function adjustOpacity() {
 		 			scope.ctrlFn(
 	 					{arg1: opacity1}
 	 				)
-	 				 
-	 		
-	 				opacity1 = 1 - player.getCurrentTime() / 10;
-	 				 
 
-		 				
+
+
+		
+					opacity1 = 1 - player.getCurrentTime() / 10;
+
+
+
 
 		 		}
 	 			

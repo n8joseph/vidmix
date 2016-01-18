@@ -2,7 +2,7 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 	
 
 
-	.controller('MainCtrl', ['$scope', 'VidLength', '$http', '$log', '$interval', 'VideosService', 'API_KEY', function($scope, VidLength, $http, $log, $interval, VideosService, API_KEY) {
+	.controller('MainCtrl', ['$scope', 'VidLength', '$http', '$log', '$interval', '$timeout', 'VideosService', 'API_KEY', function($scope, VidLength, $http, $log, $interval, $timeout, VideosService, API_KEY) {
 
        var idArray = ['A3ckIovZRwk', 'yOom_hezEKI', 'PAgY5MqpUq4']
        var myid = 'A3ckIovZRwk';
@@ -15,19 +15,26 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
        
        $scope.opacityChange = function(arg1) {
        	
-			console.log("opacityChange function ran successfully with arg1=" + arg1);
+			console.log("opacityChange function ran successfully with arg1=" + arg1 + " and opacity1= " + opacity1);
 			opacity1 = arg1;
+			firstRun = true;
 
 
        }	
        
-			$interval(myTimer, 100, 100);
+       var firstRun = false;
 
-			function myTimer() {
-				$scope.opacity1 = opacity1; 
-				console.log("$scope.opacity1 is: " + $scope.opacity1)
-				
-			}
+       if (firstRun = true) {
+       		$interval(myTimer, 100, 100)
+       }
+
+
+		function myTimer() {
+
+			$scope.opacity1 = opacity1; 
+			console.log("$scope.opacity1 is: " + $scope.opacity1)
+			
+		}
        
        
 
@@ -115,8 +122,6 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 		$scope.vidDB_length = $scope.vidDB.length;
 
 		
-		
-
 
 		
 
@@ -128,9 +133,14 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			    	lengthArray[i] = api.duration / 2;
 			    	console.log("lengthArray " + i + " is " + lengthArray[i]);
 			    	console.log(lengthArray)
+			    	if (i == 3) {
+			    		createGrid();
+			    		return;
+			    	}
 				}
 			};
-			for (i = 0; i < idArray.length; i++) {
+			var reqComplete;
+			for (i = 0; i < 4; i++) {
 				VidLength.fetchURL(idArray[i]).then(makeHandle(i));
 				clipHeightOffsetArray.push(40 * (clipHeightOffsetArray.length));
 			}
@@ -139,16 +149,22 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 
 		}
 
+		angular.element(window).ready(function () {
+        	$timeout($scope.tester2, 5000)
+
+        	
+    	});
+
 		$scope.tester2 = function() {
 			
-			var myPromise = function() {
-				var deferred = $q.defer();
-				promise.then(function(res) {
-					deferred.resolve
-				})
-			}
+			// var myPromise = function() {
+			// 	var deferred = $q.defer();
+			// 	promise.then(function(res) {
+			// 		deferred.resolve
+			// 	})
+			// }
 			
-
+			console.log('tester2 ran successfully')
 			idArray.push('IQBC5URoF0s');
 
 			addLengths();
