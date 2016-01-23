@@ -2,7 +2,7 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 	
 
 
-	.controller('MainCtrl', ['$scope', 'VidLength', '$http', '$log', '$interval', '$timeout', 'VideosService', 'API_KEY', function($scope, VidLength, $http, $log, $interval, $timeout, VideosService, API_KEY) {
+	.controller('MainCtrl', ['$scope', 'VidLength', 'VidFade', '$http', '$log', '$interval', '$timeout', 'VideosService', 'API_KEY', function($scope, VidLength, VidFade, $http, $log, $interval, $timeout, VideosService, API_KEY) {
 
        var idArray = ['A3ckIovZRwk', 'yOom_hezEKI', 'PAgY5MqpUq4']
        var myid = 'A3ckIovZRwk';
@@ -10,31 +10,50 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
        var clipHeightOffsetArray = [];
        var vidDB = [];
        var maxTotalWidth = 0;
-       $scope.maxTotalWidth = 0;
-       var opacity1;
+       $scope.maxTotalWidth = 200;
        
-       $scope.opacityChange = function(arg1) {
-       	
-			console.log("opacityChange function ran successfully with arg1=" + arg1 + " and opacity1= " + opacity1);
-			opacity1 = arg1;
-			firstRun = true;
-
-
-       }	
        
-       var firstRun = false;
+       
+       function changeOpacity() {
+       		$scope.opacity = VidFade.data.opacity;
+       }
+       $scope.$watch(function() {return VidFade.data.opacity}, function() {
+       		changeOpacity();
+       		console.log("watch is running")
+       })
 
-       if (firstRun = true) {
-       		$interval(myTimer, 100, 100)
+       $scope.tester = function() {
+       	if (VidFade.data.fadeGo == false) {
+       		VidFade.data.fadeGo = true;
+       	}
+       	else if (VidFade.data.fadeGo == true) {
+       		VidFade.data.fadeGo = false;
+       	}
+
        }
 
+  //      $scope.opacityChange = function(arg1) {
+       	
+		// 	// console.log("opacityChange function ran successfully with arg1=" + arg1 + " and opacity1= " + opacity1);
+		// 	opacity1 = arg1;
+		// 	firstRun = true;
 
-		function myTimer() {
 
-			$scope.opacity1 = opacity1; 
-			console.log("$scope.opacity1 is: " + $scope.opacity1)
+  //      }	
+       
+  //      var firstRun = false;
+
+  //      if (firstRun = true) {
+  //      		$interval(myTimer, 100, 100)
+  //      }
+
+
+		// function myTimer() {
+
+		// 	$scope.opacity1 = opacity1; 
+		// //	console.log("$scope.opacity1 is: " + $scope.opacity1)
 			
-		}
+		// }
        
        
 
@@ -133,6 +152,7 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			    	lengthArray[i] = api.duration / 2;
 			    	console.log("lengthArray " + i + " is " + lengthArray[i]);
 			    	console.log(lengthArray)
+
 			    	if (i == 3) {
 			    		createGrid();
 			    		return;
@@ -171,7 +191,8 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			// createGrid();
 
 		}
-
+        
+        
 
 
 

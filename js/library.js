@@ -43,6 +43,16 @@ angular.module('vmLibrary', [])
 	}
 	}])
 
+	.factory('VidFade', [function() {
+		
+		return {
+			data : {
+				opacity : 1,
+				fadeGo : false
+			}
+		}
+
+	}])
 
 	.service('VideosService', ['$window', '$rootScope', '$log', function ($window, $rootScope, $log) {
 
@@ -212,7 +222,7 @@ angular.module('vmLibrary', [])
 
 	})
 	
-	.directive('ngDraggable', ['$document', 'VidLength', function($document, VidLength) {
+	.directive('ngDraggable', ['$document', 'VidLength', function($document) {
 	  return {
 	    restrict: 'A',
 	    scope: {
@@ -231,6 +241,7 @@ angular.module('vmLibrary', [])
 	        drag   = scope.dragOptions.drag;
 	        stop   = scope.dragOptions.stop;
 	        var id = scope.dragOptions.container;
+	        console.log(id + 'id test');
 	        if (id) {
 	            container = document.getElementById(id).getBoundingClientRect();
 	        }
@@ -286,7 +297,7 @@ angular.module('vmLibrary', [])
 	    }
 	  }
 
-	}])
+	}]) ///
 	
 	.directive('ngVidUnit', [function() {
 		return {
@@ -312,7 +323,7 @@ angular.module('vmLibrary', [])
 //
 //	DIRECTIVE TO CREATE <YOUTUBE> PLAYERS
 //
-	.directive('youtube', function($window, $interval, YT_event, youTubeApiService) {
+	.directive('youtube', function($window, $interval, YT_event, youTubeApiService, VidFade) {
   return {
     restrict: "E",
 
@@ -393,10 +404,10 @@ angular.module('vmLibrary', [])
               });
 
       //
-      // STOPS VIDEO PLAY AT 15 SECONDS
+      // STOPS VIDEO PLAY AT 30 SECONDS
       //
 			    var time, rate, remainingTime;
-			    var stopPlayAt = 15;
+			    var stopPlayAt = 30;
 			    // clearTimeout(stopPlayTimer);
 			    if (event.data == YT.PlayerState.PLAYING) {
 			      time = player.getCurrentTime();
@@ -415,34 +426,32 @@ angular.module('vmLibrary', [])
 
 
 
-	 		// LOWER OPACITY
+	 // LOWERS OPACITY
 	 			
-	 			var opacity1;
+
 	 			var fadeStart = 5;
 	 			var fadeEnd = 10;
 	 			var time;
 
-	 			// scope.ctrlFn({
-	 			// 	arg1: opacity1,
-	 			// 	arg2: initialRun
-	 			// 	})
+	 			scope.$watch(function() {return VidFade.data.fadeGo}, function(){
+	 				startFade();
+	 			})
 
-		 		// var myVar = setInterval(adjustOpacity, 1000);
-		 		$interval(adjustOpacity, 100, 100)
+	 			function startFade() {
+			 		if (VidFade.data.fadeGo == true) {
+			 			$interval(adjustOpacity, 100, 100)
+			 		}
+		 		}
+
+		 		
 		 		
 
-
 		 		function adjustOpacity() {
-		 			scope.ctrlFn(
-	 					{arg1: opacity1}
-	 				)
 
 
-
-		
-					opacity1 = 1 - player.getCurrentTime() / 10;
-
-
+					
+					VidFade.data.opacity = 1 - player.getCurrentTime() / 10;
+					//console.log("VidFade.data.opacity is: " + VidFade.data.opacity)
 
 
 		 		}
