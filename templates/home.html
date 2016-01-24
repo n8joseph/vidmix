@@ -25,8 +25,8 @@
 
 	<div>
 		 
-		 <youtube style="opacity: {{ opacity }}" width="640" height="390" videoid="yOom_hezEKI" control="youtubeControl"> </youtube>
- 		<youtube width="640" height="390" videoid="A3ckIovZRwk" control="youtubeControl" class='vidTwo'> </youtube>
+		 <youtube data-ng-repeat="video in vidDB" style="opacity: {{ video.opacity }}" index="{{ $index }}" width="640" height="390" videoid="{{ video.vidId }}" control="youtubeControl"> </youtube>
+ 		<!-- youtube width="640" height="390" videoid="A3ckIovZRwk" control="youtubeControl" class='vidTwo'> </youtube -->
 
 		<br/>
 		<button ng-click="youtubeControl.dropSound()" style="position: relative; top: 400px; left: 40px">Lower volume to 50</button>

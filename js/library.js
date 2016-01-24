@@ -48,7 +48,8 @@ angular.module('vmLibrary', [])
 		return {
 			data : {
 				opacity : 1,
-				fadeGo : false
+				fadeGo : false,
+				vidDB : []
 			}
 		}
 
@@ -304,17 +305,6 @@ angular.module('vmLibrary', [])
 			restrict: 'E',
 			template: '<div></div>',
 			link: function(scope, element) {
-				// angular.element(document).ready(function () {
-    				
-    // 				scope.clipHeightOffset = [];
-
-    // 				for (i = 0; i < scope.idArray.length; i++) {
-    // 					console.log("COUNT ME");
-    // 					scope.clipHeightOffset.push(40 * i)
-    // 				}
-    // 				console.log(scope.clipHeightOffset)
-
-    // 			});
 			}
 
 		}
@@ -331,7 +321,7 @@ angular.module('vmLibrary', [])
       height: "@",
       width: "@",
       videoid: "@",
-      ctrlFn: '&'
+      index: '@'
     },
 
     template: '<div></div>',
@@ -404,10 +394,10 @@ angular.module('vmLibrary', [])
               });
 
       //
-      // STOPS VIDEO PLAY AT 30 SECONDS
+      // Lowers opacity when playback time equals stopPlayAt
       //
 			    var time, rate, remainingTime;
-			    var stopPlayAt = 30;
+			    var stopPlayAt = 3;
 			    // clearTimeout(stopPlayTimer);
 			    if (event.data == YT.PlayerState.PLAYING) {
 			      time = player.getCurrentTime();
@@ -420,77 +410,25 @@ angular.module('vmLibrary', [])
 			        stopPlayTimer = setTimeout(pauseVideo, remainingTime * 1000);
 			      }
 			    }
-			      function pauseVideo() {
-    			player.pauseVideo();
- 			 }
+			    
+			    function pauseVideo() {
+    				$interval(adjustOpacity, 100, 100)
+ 			 	}
 
-
-
-	 // LOWERS OPACITY
-	 			
-
-	 			var fadeStart = 5;
-	 			var fadeEnd = 10;
-	 			var time;
-
-	 			scope.$watch(function() {return VidFade.data.fadeGo}, function(){
-	 				startFade();
-	 			})
-
-	 			function startFade() {
-			 		if (VidFade.data.fadeGo == true) {
-			 			$interval(adjustOpacity, 100, 100)
-			 		}
-		 		}
-
-		 		
-		 		
-
+				 		
 		 		function adjustOpacity() {
+					//VidFade.data.opacity = 1 - player.getCurrentTime() / 10;
+					VidFade.data.vidDB[scope.index].opacity = 1 - player.getCurrentTime() / 10;
+					console.log(VidFade.data.vidDB[scope.index].opacity)
 
-
-					
-					VidFade.data.opacity = 1 - player.getCurrentTime() / 10;
 					//console.log("VidFade.data.opacity is: " + VidFade.data.opacity)
-
-
 		 		}
-	 			
-	 				// console.log("function works")
-		 			//  if (event.data == YT.PlayerState.PLAYING) {
-		 			//  	time = player.getCurrentTime();
-		 			//  	console.log("1st IF")
-		 			//  	console.log(time + " =time")
-		 			//  	console.log(fadeStart + " =fadestart")
-		 			//  	if (time == fadeStart) {
-		 			//  		console.log("2nd IF")
-		 			 		
-		 			//  		for (i = 0; i = fadeEnd - fadeStart; i++) {
-		 			//  			opacity1 -= 1 / (fadeEnd - fadeStart);
-		 			//  			console.log('fading')
-		 			//  		}
-		 			//  	}
-		 			//  }
-		 		
-
-		 		// scope.$watch(player.getCurrentTime(), function() {
-		 		// 	console.log("1st IF");
-		 		// 	time = player.getCurrentTime();
-
-		 		// })
-		 		// 	if (time == fadeStart) {
-		 		// 	 	console.log("2nd IF")
-		 		// 	}
-
-
-
-
-
 
             }
           } 
         });        
       }
+
 
       scope.$watch('height + width', function(newValue, oldValue) {
         if (newValue == oldValue) {

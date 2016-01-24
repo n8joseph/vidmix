@@ -19,7 +19,17 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
        }
        $scope.$watch(function() {return VidFade.data.opacity}, function() {
        		changeOpacity();
-       		console.log("watch is running")
+      
+       })
+
+       function updateScopeVidDB() {
+       		$scope.vidDB = VidFade.data.vidDB;
+       }
+       $scope.$watch(function() {return VidFade.data.vidDB}, function() {
+       		updateScopeVidDB()
+       		console.log("watch is running, updating vidDB on main controller scope")
+
+
        })
 
        $scope.tester = function() {
@@ -32,45 +42,7 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 
        }
 
-  //      $scope.opacityChange = function(arg1) {
-       	
-		// 	// console.log("opacityChange function ran successfully with arg1=" + arg1 + " and opacity1= " + opacity1);
-		// 	opacity1 = arg1;
-		// 	firstRun = true;
-
-
-  //      }	
-       
-  //      var firstRun = false;
-
-  //      if (firstRun = true) {
-  //      		$interval(myTimer, 100, 100)
-  //      }
-
-
-		// function myTimer() {
-
-		// 	$scope.opacity1 = opacity1; 
-		// //	console.log("$scope.opacity1 is: " + $scope.opacity1)
-			
-		// }
-       
-       
-
-		// angular.element(document).ready(function (data) {
-		// 	function makeHandle(i) {
-		// 		return function(api) {
-		// 			console.log("api.duration " + i + " is " + api.duration);
-		// 	    	lengthArray[i] = api.duration / 2;
-		// 	    	console.log("lengthArray " + i + " is " + lengthArray[i]);
-		// 		}
-		// 	};
-		// 	for (i = 0; i < idArray.length; i++) {
-		// 		VidLength.fetchURL(idArray[i]).then(makeHandle(i));
-		// 	}
-
-		// })
-
+  
 
 
 		for (i = 0; i < idArray.length; i++) {
@@ -78,19 +50,8 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			clipHeightOffsetArray.push(40 * i)
 		}
 		
-		console.log("lengthArray: ... " + lengthArray)
 
-		// for (i = 0; i < idArray.length; i++) {
-		// 	vidDB.push({
-		// 		vidId: idArray[i],
-		// 		vidLength: lengthArray[i],
-		// 		clipHeightOffset: clipHeightOffsetArray[i]
-		// 	})
-		// }
-		
-		// console.log("vidDB[1].vidId: ... " + vidDB[1].vidId)
-		// console.log("vidDB[1].vidLength: ... " + vidDB[1].vidLength)
-		// console.log("vidDB[1].clipHeightOffset: ... " + vidDB[1].clipHeightOffset)
+
 
 		var setMaxTotalWidth = function() {
 			for (i = 0; i < lengthArray.length; i++) {
@@ -100,9 +61,6 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			$scope.maxTotalWidth = maxTotalWidth
 		}	
 
-		// var showContainer = function() {
-		// 	$scope.showContainer = "block";
-		// }
 
 		
 
@@ -111,16 +69,26 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			console.log("idArray.length: " + idArray.length)
 
 			for (i = 0; i < idArray.length; i++) {
-				vidDB.push({
+				VidFade.data.vidDB.push({
 					vidId: idArray[i],
 					vidLength: lengthArray[i],
-					clipHeightOffset: clipHeightOffsetArray[i]
+					clipHeightOffset: clipHeightOffsetArray[i],
+					fadeStartTime: 10,
+					opacity: 1 
 				})
 				console.log("idarray: " + idArray)
 				console.log("lengtharray: " + lengthArray)
 				console.log("vidDB: " + vidDB)
 			}
-			$scope.vidDB = vidDB;
+			
+			function updateScopeVidDB() {
+				$scope.vidDB = VidFade.data.vidDB;
+			}
+
+			$scope.$watch(function() {return VidFade.data.vidDB}, function(){
+				updateScopeVidDB();
+			})
+			
 
 
 			setMaxTotalWidth();
@@ -169,11 +137,11 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 
 		}
 
-		angular.element(window).ready(function () {
-        	$timeout($scope.tester2, 5000)
+		// angular.element(window).ready(function () {
+  //       	$timeout($scope.tester2, 5000)
 
         	
-    	});
+  //   	});
 
 		$scope.tester2 = function() {
 			
