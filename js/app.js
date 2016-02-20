@@ -10,9 +10,8 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
        var clipHeightOffsetArray = [];
        var vidDB = [];
        var maxTotalWidth = 0;
-       $scope.maxTotalWidth = 200;
-       
-       
+       $scope.maxTotalWidth = 400;
+   
        
        function changeOpacity() {
        		$scope.opacity = VidFade.data.opacity;
@@ -29,26 +28,9 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
        		updateScopeVidDB()
        		console.log("watch is running, updating vidDB on main controller scope")
 
-
        })
 
-       $scope.tester = function() {
-       	if (VidFade.data.fadeGo == false) {
-       		VidFade.data.fadeGo = true;
-       	}
-       	else if (VidFade.data.fadeGo == true) {
-       		VidFade.data.fadeGo = false;
-       	}
 
-       }
-
-  
-
-
-		for (i = 0; i < idArray.length; i++) {
-			console.log("COUNT ME");
-			clipHeightOffsetArray.push(40 * i)
-		}
 		
 
 
@@ -74,7 +56,8 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 					vidLength: lengthArray[i],
 					clipHeightOffset: clipHeightOffsetArray[i],
 					fadeStartTime: 10,
-					opacity: 1 
+					opacity: 1,
+		
 				})
 				console.log("idarray: " + idArray)
 				console.log("lengtharray: " + lengthArray)
@@ -112,8 +95,10 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 
 		
 
-		var addLengths = function(data) {
-					
+		var addLengths = function() {
+			
+			
+
 			function makeHandle(i) {
 				return function(api) {
 					console.log("api.duration " + i + " is " + api.duration);
@@ -121,16 +106,21 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			    	console.log("lengthArray " + i + " is " + lengthArray[i]);
 			    	console.log(lengthArray)
 
-			    	if (i == 3) {
+			    	if (i == length - 1) {
 			    		createGrid();
 			    		return;
 			    	}
 				}
 			};
 			var reqComplete;
-			for (i = 0; i < 4; i++) {
+			var length = idArray.length;
+			console.log("addLengths function ran. length variable is: " + length)
+			console.log("addLengths function ran. idArray length is: " + idArray.length)	
+
+			for (i = 0; i < length; i++) {
 				VidLength.fetchURL(idArray[i]).then(makeHandle(i));
 				clipHeightOffsetArray.push(40 * (clipHeightOffsetArray.length));
+
 			}
 			// createGrid();
 			console.log(clipHeightOffsetArray)

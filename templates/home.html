@@ -30,6 +30,9 @@
 
 		<br/>
 		<button ng-click="youtubeControl.dropSound()" style="position: relative; top: 400px; left: 40px">Lower volume to 50</button>
+
+		
+
 	</div>
 
 
@@ -51,11 +54,9 @@
 
 		<div id="container" style="height: {{ vidDB.length * 40 + 2}}px; width: {{ maxTotalWidth }}px;">
 
-
-		    <div ng-repeat="clip in vidDB">
-		        <ng-vid-unit class="shape noOne" ng-draggable='dragOptions' style="top: {{ clip.clipHeightOffset }}px; width: {{ clip.vidLength }}px"><p>{{clip.clipHeightOffset}}</p></ng-vid-unit>
+		        <ng-vid-unit ng-repeat="clip in vidDB" class="shape noOne" ng-draggable='dragOptions' style="top: {{ clip.clipHeightOffset }}px; width: {{ clip.vidLength }}px"><p>{{clip.clipHeightOffset}}</p></ng-vid-unit>
 		        <!--ng-vid-unit class="shape noTwo" ng-draggable='dragOptions'></ng-vid-unit-->
-		    </div>
+		    
 		</div>
 
 		<br/>

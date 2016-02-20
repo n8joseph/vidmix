@@ -313,7 +313,7 @@ angular.module('vmLibrary', [])
 //
 //	DIRECTIVE TO CREATE <YOUTUBE> PLAYERS
 //
-	.directive('youtube', function($window, $interval, YT_event, youTubeApiService, VidFade) {
+	.directive('youtube', function($window, $interval, $timeout, YT_event, youTubeApiService, VidFade) {
   return {
     restrict: "E",
 
@@ -367,7 +367,7 @@ angular.module('vmLibrary', [])
             'onStateChange': function(event) {       
 
     //
-	// MAPS YOUTUBE VIDEO EVENTS TO SCOPE MESSAGES
+	// 
 	//
               var message = {
                 event: YT_event.STATUS_CHANGE,
@@ -394,25 +394,50 @@ angular.module('vmLibrary', [])
               });
 
       //
+      // Plays next video
+      //	
+      			if (event.data == YT.PlayerState.UNSTARTED) {
+
+      				console.log("unstarted video loaded with index: " + scope.index)
+      				console.log(event)
+      				player.pauseVideo()
+
+
+      			}
+
+
+
+      //
       // Lowers opacity when playback time equals stopPlayAt
       //
-			    var time, rate, remainingTime;
+			    var time, rate, remainingTime, nextVidIndex;
 			    var stopPlayAt = 3;
+			    
 			    // clearTimeout(stopPlayTimer);
 			    if (event.data == YT.PlayerState.PLAYING) {
-			      time = player.getCurrentTime();
+			     	 time = player.getCurrentTime();
+			     	 nextVidIndex = Number(scope.index) - 1;
 
 			      // Add .4 of a second to the time in case it's close to the current time
 			      // (The API kept returning ~9.7 when hitting play after stopping at 10s)
-			      if (time + .4 < stopPlayAt) {
-			        rate = player.getPlaybackRate();
-			        remainingTime = (stopPlayAt - time) / rate;
-			        stopPlayTimer = setTimeout(pauseVideo, remainingTime * 1000);
-			      }
+				      if (time + .4 < stopPlayAt) {
+					        rate = player.getPlaybackRate();
+					        remainingTime = (stopPlayAt - time) / rate;
+					        stopPlayTimer = setTimeout(pauseVideo, remainingTime * 1000);
+					        console.log("NextVidIndex is: " + nextVidIndex)
+					        console.log("scope.index is: " + scope.index)
+					        
+
+				      }
+      			
+
+
 			    }
 			    
 			    function pauseVideo() {
-    				$interval(adjustOpacity, 100, 100)
+    				$interval(adjustOpacity, 1000, 100)
+    				$interval(adjustVolume, 1000, 100)
+
  			 	}
 
 				 		
@@ -420,8 +445,12 @@ angular.module('vmLibrary', [])
 					//VidFade.data.opacity = 1 - player.getCurrentTime() / 10;
 					VidFade.data.vidDB[scope.index].opacity = 1 - player.getCurrentTime() / 10;
 					console.log(VidFade.data.vidDB[scope.index].opacity)
-
 					//console.log("VidFade.data.opacity is: " + VidFade.data.opacity)
+		 		}
+
+		 		function adjustVolume() {
+
+		 			player.setVolume(100 - (player.getCurrentTime() * 10) )
 		 		}
 
             }
