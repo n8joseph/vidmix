@@ -11,11 +11,9 @@ angular.module('vmLibrary', [])
 
 	.factory('VidLength', ['$http', 'API_KEY', function($http, API_KEY) {
 
-		console.log('hi factory ( page load )');
-
 		  return { 
 		    fetchURL:
-			 function(myid) { console.log('factory fired')
+			 function(myid) {
 			   return $http({
 			     method: 'GET',
 			     url: 'https://www.googleapis.com/youtube/v3/videos',
@@ -36,7 +34,7 @@ angular.module('vmLibrary', [])
 		          	duration, duration
 		          }
 		        }, function(response) {
-		          console.log("failure")   
+		          console.log("failure");   
 		  	})
 		   }
 
@@ -55,103 +53,13 @@ angular.module('vmLibrary', [])
 
 	}])
 
-	.service('VideosService', ['$window', '$rootScope', '$log', function ($window, $rootScope, $log) {
+	.service('VideoSearchService', [function () {
 
-	  var service = this;
-
-	  var youtube = {
-	    ready: false,
-	    player: null,
-	    playerId: null,
-	    videoId: null,
-	    videoTitle: null,
-	    playerHeight: '480',
-	    playerWidth: '640',
-	    state: 'stopped'
-	  };
 	  var results = [];
-	  var upcoming = [
-	    {id: 'kRJuY6ZDLPo', title: 'La Roux - In for the Kill (Twelves Remix)'},
-	    {id: '45YSGFctLws', title: 'Shout Out Louds - Illusions'},
-	    {id: 'ktoaj1IpTbw', title: 'CHVRCHES - Gun'},
-	    {id: '8Zh0tY2NfLs', title: 'N.E.R.D. ft. Nelly Furtado - Hot N\' Fun (Boys Noize Remix) HQ'},
-	    {id: 'zwJPcRtbzDk', title: 'Daft Punk - Human After All (SebastiAn Remix)'},
-	    {id: 'sEwM6ERq0gc', title: 'HAIM - Forever (Official Music Video)'},
-	    {id: 'fTK4XTvZWmk', title: 'Housse De Racket â˜â˜€â˜ Apocalypso'}
-	  ];
-	  var history = [
-	    {id: 'XKa7Ywiv734', title: '[OFFICIAL HD] Daft Punk - Give Life Back To Music (feat. Nile Rodgers)'}
-	  ];
 
-	  $window.onYouTubeIframeAPIReady = function () {
-	    $log.info('Youtube API is ready');
-	    youtube.ready = true;
-	    service.bindPlayer('placeholder');
-	    service.loadPlayer();
-	    $rootScope.$apply();
-	  };
-
-	  function onYoutubeReady (event) {
-	    $log.info('YouTube Player is ready');
-	    youtube.player.cueVideoById(history[0].id);
-	    youtube.videoId = history[0].id;
-	    youtube.videoTitle = history[0].title;
-	  }
-
-	  function onYoutubeStateChange (event) {
-	    if (event.data == YT.PlayerState.PLAYING) {
-	      youtube.state = 'playing';
-	    } else if (event.data == YT.PlayerState.PAUSED) {
-	      youtube.state = 'paused';
-	    } else if (event.data == YT.PlayerState.ENDED) {
-	      youtube.state = 'ended';
-	      service.launchPlayer(upcoming[0].id, upcoming[0].title);
-	      service.archiveVideo(upcoming[0].id, upcoming[0].title);
-	      service.deleteVideo(upcoming, upcoming[0].id);
-	    }
-	    $rootScope.$apply();
-	  }
-
-	  this.bindPlayer = function (elementId) {
-	    $log.info('Binding to ' + elementId);
-	    youtube.playerId = elementId;
-	  };
-
-	  this.createPlayer = function () {
-	    $log.info('Creating a new Youtube player for DOM id ' + youtube.playerId + ' and video ' + youtube.videoId);
-	    return new YT.Player(youtube.playerId, {
-	      height: youtube.playerHeight,
-	      width: youtube.playerWidth,
-	      playerVars: {
-	        rel: 0,
-	        showinfo: 0
-	      },
-	      events: {
-	        'onReady': onYoutubeReady,
-	        'onStateChange': onYoutubeStateChange
-	      }
-	    });
-	  };
-
-	  this.loadPlayer = function () {
-	    if (youtube.ready && youtube.playerId) {
-	      if (youtube.player) {
-	        youtube.player.destroy();
-	      }
-	      youtube.player = service.createPlayer();
-	    }
-	  };
-
-	  this.launchPlayer = function (id, title) {
-	    youtube.player.loadVideoById(id);
-	    youtube.videoId = id;
-	    youtube.videoTitle = title;
-	    return youtube;
-	  }
-
-	  this.listResults = function (data) {
+	  this.populateResults = function (data) {
 	    results.length = 0;
-	    for (var i = data.items.length - 1; i >= 0; i--) {
+	    for (var i = 0; i < data.items.length; i++) {
 	      results.push({
 	        id: data.items[i].id.videoId,
 	        title: data.items[i].snippet.title,
@@ -163,46 +71,10 @@ angular.module('vmLibrary', [])
 	    return results;
 	  }
 
-	  this.queueVideo = function (id, title) {
-	    upcoming.push({
-	      id: id,
-	      title: title
-	    });
-	    return upcoming;
-	  };
-
-	  this.archiveVideo = function (id, title) {
-	    history.unshift({
-	      id: id,
-	      title: title
-	    });
-	    return history;
-	  };
-
-	  this.deleteVideo = function (list, id) {
-	    for (var i = list.length - 1; i >= 0; i--) {
-	      if (list[i].id === id) {
-	        list.splice(i, 1);
-	        break;
-	      }
-	    }
-	  };
-
-	  this.getYoutube = function () {
-	    return youtube;
-	  };
-
 	  this.getResults = function () {
 	    return results;
 	  };
 
-	  this.getUpcoming = function () {
-	    return upcoming;
-	  };
-
-	  this.getHistory = function () {
-	    return history;
-	  };
 
 	}])
 
@@ -223,82 +95,71 @@ angular.module('vmLibrary', [])
 
 	})
 	
-	.directive('ngDraggable', ['$document', 'VidLength', function($document) {
-	  return {
-	    restrict: 'A',
-	    scope: {
-	      dragOptions: '=ngDraggable'
-	    },
-	    link: function(scope, elem, attr) {
-	      var startX, startY, x = 0, y = 0,
-	          start, stop, drag, container;
+	.directive('ngDraggable', ['$document', function($document) {
+		return {
 
-	      var width  = elem[0].offsetWidth,
-	          height = elem[0].offsetHeight;
+		    restrict: 'A',
 
-	      // Obtain drag options
-	      if (scope.dragOptions) {
-	        start  = scope.dragOptions.start;
-	        drag   = scope.dragOptions.drag;
-	        stop   = scope.dragOptions.stop;
-	        var id = scope.dragOptions.container;
-	        console.log(id + 'id test');
-	        if (id) {
-	            container = document.getElementById(id).getBoundingClientRect();
-	        }
-	      }
+		    scope: {
+		      dragOptions: '=ngDraggable'
+		    },
 
+		    link: function(scope, elem, attr) {
+				
+				var startX, curX = 0;
+				var start, stop, drag, container;
 
-	      // Bind mousedown event
-	      elem.on('mousedown', function(e) {
-	        e.preventDefault();
-	        console.log(e)
-	        startX = e.clientX - elem[0].offsetLeft;
-	      //  startY = e.clientY - elem[0].offsetTop;
-	        $document.on('mousemove', mousemove);
-	        $document.on('mouseup', mouseup);
-	        if (start) start(e);
-	      });
+		      	// Obtain drag options
+		      	if (scope.dragOptions) {
+		        	start  = scope.dragOptions.start;
+		        	drag   = scope.dragOptions.drag;
+		        	stop   = scope.dragOptions.stop;
+		        	var id = scope.dragOptions.container;
+		        	console.log(id + 'id test');
+		        	if (id) {
+		            	container = document.getElementById(id).getBoundingClientRect();
+		        	}
+		      	}
 
-	      // Handle drag event
-	      function mousemove(e) {
-	      //  y = e.clientY - startY;
-	        x = e.clientX - startX;
-	        setPosition();
-	        if (drag) drag(e);
-	      }
+		      	// Bind mousedown event
+		      	elem.on('mousedown', function(e) {
+			        e.preventDefault();
+			        startX = e.clientX - elem[0].offsetLeft;
+			        $document.on('mousemove', mousemove);
+			        $document.on('mouseup', mouseup);
+			        if (start) start(e);
+		      	});
 
-	      // Unbind drag events
-	      function mouseup(e) {
-	        $document.unbind('mousemove', mousemove);
-	        $document.unbind('mouseup', mouseup);
-	        if (stop) stop(e);
-	      }
+		      	// Handle drag event
+		      	function mousemove(e) {
+			        curX = e.clientX - startX;
+			        setPosition();
+			        if (drag) drag(e);
+		      	}
 
-	      // Move element, within container if provided
-	      function setPosition() {
-	        if (container) {
-	          if (x < container.left) {
-	            x = container.left - 8;
-	          } else if (x > container.right - width) {
-	            x = container.right - width - 8;
-	          }
-	        //   if (y < container.top) {
-	        //     y = container.top;
-	        //   } else if (y > container.bottom - height) {
-	        //     y = container.bottom - height;
-	        //   }
-	         }
+		      	// Unbind drag events
+		      	function mouseup(e) {
+			        $document.unbind('mousemove', mousemove);
+			        $document.unbind('mouseup', mouseup);
+			        if (stop) stop(e);
+		      	}
 
-	        elem.css({
-	       //   top: y + 'px',
-	          left:  x + 'px'
-	        });
-	      }
-	    }
-	  }
+		      	// Move element, within container if provided
+		      	function setPosition() {
+		        	if (container) {
+		          		if (curX < container.left) {
+		            		curX = container.left - 8;
+		          		} 
+		          		else if (curX > container.right - elem[0].offsetWidth) {
+		            		curX = container.right - elem[0].offsetWidth - 8;
+		          		}
+		         	}
 
-	}]) ///
+		        	elem.css({left:  curX + 'px'});
+		      	}
+		    }
+		}
+	}])
 	
 	.directive('ngVidUnit', [function() {
 		return {
@@ -310,192 +171,117 @@ angular.module('vmLibrary', [])
 		}
 	}])
 
-//
-//	DIRECTIVE TO CREATE <YOUTUBE> PLAYERS
-//
-	.directive('youtube', function($window, $interval, $timeout, YT_event, youTubeApiService, VidFade) {
-  return {
-    restrict: "E",
+	//	Directive to create <youtube> players.
+	.directive('youtube', function($interval, YT_event, youTubeApiService, VidFade) {
+  		return {
+    		restrict: "E",
 
-    scope: {
-      height: "@",
-      width: "@",
-      videoid: "@",
-      index: '@'
-    },
+    		scope: {
+      			height: "@",
+				width: "@",
+				videoid: "@",
+				index: '@'
+    		},
 
-    template: '<div></div>',
+    		template: '<div></div>',
 
-    link: function(scope, element, attrs, $rootScope) {
-      var tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    		link: function(scope, element) {
+      			var tag = document.createElement('script');
+				tag.src = "https://www.youtube.com/iframe_api";
+				var firstScriptTag = document.getElementsByTagName('script')[0];
+				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
       
-      var player;
+      			var player;
 
-      // scope.$watch(attrs.myCurrentTime, function(value) {
-      //   opacity1 = value;
-      //   updateTime();
-      // });
-
-      youTubeApiService.onReady(function() {
-        player = setupPlayer(scope, element);
-      });
+    			youTubeApiService.onReady(function() {
+        			player = setupPlayer(scope, element);
+      			});
 
  
-      function setupPlayer(scope, element) {
-        return new YT.Player(element.children()[0], {
-          playerVars: {
-            autoplay: 0,
-            html5: 1,
-            theme: "dark",
-            modestbranding: 1,
-            iv_load_policy: 3,
-            showinfo: 0,
-            controls: 0,
-            autohide: 1,
-            disablekb: 1,
-            rel: 0
-          },
+      			function setupPlayer(scope, element) {
+        			return new YT.Player(element.children()[0], {
+	          			playerVars: {
+			            	autoplay: 0,
+				            html5: 1,
+				            theme: "dark",
+				            modestbranding: 1,
+				            iv_load_policy: 3,
+				            showinfo: 0,
+				            controls: 0,
+				            autohide: 1,
+				            disablekb: 1,
+				            rel: 0
+          				},
           
-          height: scope.height,
-          width: scope.width,
-          videoId: scope.videoid, 
+          				height: scope.height,
+          				width: scope.width,
+          				videoId: scope.videoid,
+          				events: {
+            				'onStateChange': function(event) {
 
-          events: {
-            'onStateChange': function(event) {       
-
-    //
-	// 
-	//
-              var message = {
-                event: YT_event.STATUS_CHANGE,
-                data: ""
-              };
+            					///////////
+            					// Start: Reminder code for $apply and $emit.
+              					var message = {
+                					event: YT_event.STATUS_CHANGE,
+                					data: ""
+              					};
               
-              switch(event.data) {
-                case YT.PlayerState.PLAYING:
-                  message.data = "PLAYING";
-                  break;
-                case YT.PlayerState.ENDED:
-                  message.data = "ENDED";
-                  break;
-                case YT.PlayerState.UNSTARTED:
-                  message.data = "NOT PLAYING";
-                  break;
-                case YT.PlayerState.PAUSED:
-                  message.data = "PAUSED";
-                  break;
-              }
+		              			switch(event.data) {
+		                			case YT.PlayerState.PLAYING:
+		                  				message.data = "PLAYING";
+		                  				break;
+		                			case YT.PlayerState.ENDED:
+		                  				message.data = "ENDED";
+		               					break;
+		                			case YT.PlayerState.UNSTARTED:
+		                  				message.data = "NOT PLAYING";
+		                 				break;
+		                			case YT.PlayerState.PAUSED:
+		                  				message.data = "PAUSED";
+		                  				break;
+		              			}
 
-              scope.$apply(function() {
-                scope.$emit(message.event, message.data);
-              });
+	              				scope.$apply(function() {
+	                				scope.$emit(message.event, message.data);
+	              				});
+	              				// End: Reminder code for $apply and $emit.
+	              				///////////
 
-      //
-      // Plays next video
-      //	
-      			if (event.data == YT.PlayerState.UNSTARTED) {
+      							
+			    				if (event.data == YT.PlayerState.PLAYING) {
+			    					// Lower opacity when playback time equals stopPlayAt
+			    					var stopPlayAt = 3;
+			     	 				var time = player.getCurrentTime();
+			     	 				var nextVidIndex = Number(scope.index) - 1;
 
-      				console.log("unstarted video loaded with index: " + scope.index)
-      				console.log(event)
-      				player.pauseVideo()
+			      					// Add .4 of a second to the time in case it's close to the current time
+			      					// (The API kept returning ~9.7 when hitting play after stopping at 10s)
+				      				if (time + .4 < stopPlayAt) {
+					        			var remainingTime = (stopPlayAt - time) / player.getPlaybackRate();
+								        setTimeout(adjustOpacityAndVolume, remainingTime * 1000);
+				      				}
 
+				      				function adjustOpacityAndVolume() {
+    									$interval(adjustOpacity, 1000, 100)
+    									$interval(adjustVolume, 1000, 100)
+	 			 					}
 
+					 		
+			 						function adjustOpacity() {
+										VidFade.data.vidDB[scope.index].opacity = 1 - player.getCurrentTime() / 10;
+			 						}
+
+			 						function adjustVolume() {
+			 							player.setVolume(100 - (player.getCurrentTime() * 10) );
+			 						}
+      							}
+            				}
+          				} 
+        			});        
       			}
-
-
-
-      //
-      // Lowers opacity when playback time equals stopPlayAt
-      //
-			    var time, rate, remainingTime, nextVidIndex;
-			    var stopPlayAt = 3;
-			    
-			    // clearTimeout(stopPlayTimer);
-			    if (event.data == YT.PlayerState.PLAYING) {
-			     	 time = player.getCurrentTime();
-			     	 nextVidIndex = Number(scope.index) - 1;
-
-			      // Add .4 of a second to the time in case it's close to the current time
-			      // (The API kept returning ~9.7 when hitting play after stopping at 10s)
-				      if (time + .4 < stopPlayAt) {
-					        rate = player.getPlaybackRate();
-					        remainingTime = (stopPlayAt - time) / rate;
-					        stopPlayTimer = setTimeout(pauseVideo, remainingTime * 1000);
-					        console.log("NextVidIndex is: " + nextVidIndex)
-					        console.log("scope.index is: " + scope.index)
-					        
-
-				      }
-      			
-
-
-			    }
-			    
-			    function pauseVideo() {
-    				$interval(adjustOpacity, 1000, 100)
-    				$interval(adjustVolume, 1000, 100)
-
- 			 	}
-
-				 		
-		 		function adjustOpacity() {
-					//VidFade.data.opacity = 1 - player.getCurrentTime() / 10;
-					VidFade.data.vidDB[scope.index].opacity = 1 - player.getCurrentTime() / 10;
-					console.log(VidFade.data.vidDB[scope.index].opacity)
-					//console.log("VidFade.data.opacity is: " + VidFade.data.opacity)
-		 		}
-
-		 		function adjustVolume() {
-
-		 			player.setVolume(100 - (player.getCurrentTime() * 10) )
-		 		}
-
-            }
-          } 
-        });        
-      }
-
-
-      scope.$watch('height + width', function(newValue, oldValue) {
-        if (newValue == oldValue) {
-          return;
-        }
-    
-        player.setSize(scope.width, scope.height);
-      
-      });
-
-      scope.$watch('videoid', function(newValue, oldValue) {
-        if (newValue == oldValue) {
-          return;
-        }
-        
-        player.cueVideoById(scope.videoid);
-      
-      });
-
-      scope.$on(YT_event.STOP, function () {
-        player.seekTo(0);
-        player.stopVideo();
-      });
-
-      scope.$on(YT_event.PLAY, function () {
-        console.log("RECEIVING");
-        player.playVideo();
-      }); 
-
-      scope.$on(YT_event.PAUSE, function () {
-        player.pauseVideo();
-      });  
-
-
-
-    }  
-  };
-})
+			}  
+  		};
+	})
 			
 
 	
