@@ -5,82 +5,67 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 	.controller('MainCtrl', ['$scope', 'VidLength', 'VidFade', '$http', '$log', '$interval', '$timeout', 'VideoSearchService', 'API_KEY', function($scope, VidLength, VidFade, $http, $log, $interval, $timeout, VideoSearchService, API_KEY) {
 
     	var idArray = ['A3ckIovZRwk', 'yOom_hezEKI', 'PAgY5MqpUq4']
-       	var lengthArray = [];
       	var clipHeightOffsetArray = [];
        	var vidDB = [];
        	var maxTotalWidth = 0;
        
 		var setMaxTotalWidth = function() {
-			for (i = 0; i < lengthArray.length; i++) {
-				maxTotalWidth += lengthArray[i];
+			if (VidFade.data.vidDB.length == idArray.length) {
+				for (i = 0; i < VidFade.data.vidDB.length; i++) {
+					console.log("current video length: " + VidFade.data.vidDB[i].vidLength);
+					maxTotalWidth += VidFade.data.vidDB[i].vidLength;
+				}
+				console.log("maxTotalWidth: " + maxTotalWidth);
+				$scope.maxTotalWidth = maxTotalWidth;
 			}
-			$scope.maxTotalWidth = maxTotalWidth
-		}	
-
-
-		// TO DO: Revisit this logic.
-		var createGrid = function() {
-			console.log("lengthArray: " + lengthArray)
-			console.log("idArray.length: " + idArray.length)
-
-			for (i = 0; i < idArray.length; i++) {
-				VidFade.data.vidDB.push({
-					vidId: idArray[i],
-					vidLength: lengthArray[i],
-					clipHeightOffset: clipHeightOffsetArray[i],
-					fadeStartTime: 10,
-					opacity: 1,
-		
-				})
-				console.log("idarray: " + idArray)
-				console.log("lengtharray: " + lengthArray)
-				console.log("vidDB: " + vidDB)
-			}
-			
-			function updateScopeVidDB() {
-				$scope.vidDB = VidFade.data.vidDB;
-			}
-
-			$scope.$watch(function() {return VidFade.data.vidDB}, function(){
-				updateScopeVidDB();
-			})
-			
-			setMaxTotalWidth();
 		}
 
-		var populateLengthArray = function() {
+		var populateVidDB = function() {
 
-			// Helper function to push data to lengthArray.
-			function pushToLengthArray(index) {
+			function onSuccessfulRetrieval(index) {
 				return function(api) {
-			    	lengthArray[index] = api.duration / 2;
-			    	// TO DO: Fix this call to createGrid.
-			    	if (index == idArray.length - 1) {
-			    		createGrid();
-			    		return;
-			    	}
+					VidFade.data.vidDB.push({
+						vidID: idArray[index],
+						vidLength: api.duration / 2,
+						clipHeightOffset: clipHeightOffsetArray[index],
+						fadeStartTime: 10,
+						opacity: 1,
+						success: true
+					})
+					setMaxTotalWidth();
 				}
-			};
+			}
+
+			function onFailedRetrieval(index) {
+				return function() {
+					VidFade.data.vidDB.push({
+						vidID: idArray[index],
+						vidLength: 0,
+						clipHeightOffset: clipHeightOffsetArray[index],
+						fadeStartTime: 10,
+						opacity: 1,
+						success: false
+					})
+					setMaxTotalWidth();
+				}
+			}
 
 			for ( i = 0; i < idArray.length; i++) {
-				VidLength.fetchURL(idArray[i]).then(pushToLengthArray(i));
+				VidLength.fetchURL(idArray[i])
+				.then(onSuccessfulRetrieval(i))
+				, onFailedRetrieval(i);
 			}
 		}
 
 		var populateClipHeightOffsetArray = function() {
 			for (i = 0; i < idArray.length; i++) {
 				clipHeightOffsetArray.push(40 * (clipHeightOffsetArray.length));
-
 			}
 		}
 
 	    function initializeScopeAttributes() {
 	      	$scope.results = VideoSearchService.getResults();
 	     	$scope.maxTotalWidth = 400;
-	     	$scope.createGrid = createGrid;
-			$scope.clipHeightOffsetArray = clipHeightOffsetArray;
-			$scope.lengthArray = lengthArray;
-			$scope.idArray = idArray;
 			$scope.youtubeControl = {};
 			$scope.vidDB = [];
 			$scope.showContainer = "none";
@@ -121,7 +106,7 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 		$scope.RunVidmixTest = function() {
 
 			populateClipHeightOffsetArray();
-			populateLengthArray();
+			populateVidDB();
 
 		}
 
@@ -132,6 +117,19 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
        	$scope.$watch(function() {return VidFade.data.vidDB}, function() {
        		$scope.vidDB = VidFade.data.vidDB;
        	})
+
+       	$scope.dragOptions = {
+	        start: function(e) {
+	          console.log("STARTING");
+	        },
+	        drag: function(e) {
+	          console.log("DRAGGING");
+	        },
+	        stop: function(e) {
+	          console.log("STOPPING");
+	        },
+	        container: 'container'
+    	}
 
     }])
 

@@ -29,7 +29,7 @@
  		<!-- youtube width="640" height="390" videoid="A3ckIovZRwk" control="youtubeControl" class='vidTwo'> </youtube -->
 
 		<br/>
-		<button ng-click="youtubeControl.dropSound()" style="position: relative; top: 400px; left: 40px">Lower volume to 50</button>
+
 
 		
 
@@ -38,10 +38,9 @@
 
 	<div style="top: 466px; position: absolute">
 
-		<button ng-click="createGrid()" class="bigButton">Create Grid</button>
-
 		<div class="vid_wrap">
-		  <ng-vid-unit class="shape noOne" ng-draggable='dragOptions' style="top: 50px; width: 200px"><p></p></ng-vid-unit>
+		
+     	<br/>
      	<br/>
      	<br/>
      	<br/>
@@ -56,13 +55,10 @@
 
 		<br/>
 
-		<button ng-click="tester()">tester</button>
-		<button ng-click="RunVidmixTest()">CLICK FIRST</button>
-		<button ng-click="tester3()">tester3</button>
+		<button ng-click="RunVidmixTest()">Vidmix Test</button>
 		<p>clip height offset for vid 2 (obj 1): {{ vidDB[1].clipHeightOffset }}</p>
 		<p>max total width {{ maxTotalWidth }}</p>
 		<p>Id Array: {{ idArray }}</p>
-		<p>Length Array: {{ lengthArray }}</p>
 		<p>VidDb length: {{ vidDB_length }} </p>
 		<p>VidDB: {{ vidDB }}</p>
 			<div id="footnote"></div>
