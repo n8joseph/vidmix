@@ -4,38 +4,16 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 
 	.controller('MainCtrl', ['$scope', 'VidLength', 'VidFade', '$http', '$log', '$interval', '$timeout', 'VideoSearchService', 'API_KEY', function($scope, VidLength, VidFade, $http, $log, $interval, $timeout, VideoSearchService, API_KEY) {
 
-       var idArray = ['A3ckIovZRwk', 'yOom_hezEKI', 'PAgY5MqpUq4']
-       var myid = 'A3ckIovZRwk';
-       var lengthArray = [];
-       var clipHeightOffsetArray = [];
-       var vidDB = [];
-       var maxTotalWidth = 0;
-       $scope.maxTotalWidth = 400;
-   
+    	var idArray = ['A3ckIovZRwk', 'yOom_hezEKI', 'PAgY5MqpUq4']
+       	var lengthArray = [];
+      	var clipHeightOffsetArray = [];
+       	var vidDB = [];
+       	var maxTotalWidth = 0;
        
-       function changeOpacity() {
-       		$scope.opacity = VidFade.data.opacity;
-       }
-
-       $scope.$watch(function() {return VidFade.data.opacity}, function() {
-       		changeOpacity();
-       })
-
-       function updateScopeVidDB() {
-       		$scope.vidDB = VidFade.data.vidDB;
-       }
-
-       $scope.$watch(function() {return VidFade.data.vidDB}, function() {
-       		updateScopeVidDB()
-       		console.log("watch is running, updating vidDB on main controller scope")
-
-       })
-
 		var setMaxTotalWidth = function() {
 			for (i = 0; i < lengthArray.length; i++) {
 				maxTotalWidth += lengthArray[i];
 			}
-			console.log("setMaxTotalWidth ran successfully")
 			$scope.maxTotalWidth = maxTotalWidth
 		}	
 
@@ -70,76 +48,49 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			setMaxTotalWidth();
 		}
 
-		$scope.createGrid = createGrid;
+		var populateLengthArray = function() {
 
-		$scope.clipHeightOffsetArray = clipHeightOffsetArray;
-		$scope.lengthArray = lengthArray;
-		$scope.idArray = idArray;
-		$scope.youtubeControl = {};
-		$scope.vidDB = [];
-		$scope.showContainer = "none";
-
-		$scope.vidDB_length = $scope.vidDB.length;
-
-
-		var addLengths = function() {
-
-			function makeHandle(i) {
+			// Helper function to push data to lengthArray.
+			function pushToLengthArray(index) {
 				return function(api) {
-					console.log("api.duration " + i + " is " + api.duration);
-			    	lengthArray[i] = api.duration / 2;
-			    	console.log("lengthArray " + i + " is " + lengthArray[i]);
-			    	console.log(lengthArray)
-
-			    	if (i == length - 1) {
+			    	lengthArray[index] = api.duration / 2;
+			    	// TO DO: Fix this call to createGrid.
+			    	if (index == idArray.length - 1) {
 			    		createGrid();
 			    		return;
 			    	}
 				}
 			};
 
-			var reqComplete;
-			var length = idArray.length;
-			console.log("addLengths function ran. length variable is: " + length)
-			console.log("addLengths function ran. idArray length is: " + idArray.length)	
+			for ( i = 0; i < idArray.length; i++) {
+				VidLength.fetchURL(idArray[i]).then(pushToLengthArray(i));
+			}
+		}
 
-			for (i = 0; i < length; i++) {
-				VidLength.fetchURL(idArray[i]).then(makeHandle(i));
+		var populateClipHeightOffsetArray = function() {
+			for (i = 0; i < idArray.length; i++) {
 				clipHeightOffsetArray.push(40 * (clipHeightOffsetArray.length));
 
 			}
-			console.log(clipHeightOffsetArray)
-
 		}
 
-		$scope.tester2 = function() {
-			console.log('tester2 ran successfully')
-			idArray.push('IQBC5URoF0s');
-
-			addLengths();
-		}
-        
-		$scope.dragOptions = {
-	        start: function(e) {
-	          console.log("STARTING");
-	        },
-	        drag: function(e) {
-	          console.log("DRAGGING");
-	        },
-	        stop: function(e) {
-	          console.log("STOPPING");
-	        },
-	        container: 'container'
-    	}
-
-    	init();
-
-	    function init() {
-	      $scope.results = VideoSearchService.getResults();
+	    function initializeScopeAttributes() {
+	      	$scope.results = VideoSearchService.getResults();
+	     	$scope.maxTotalWidth = 400;
+	     	$scope.createGrid = createGrid;
+			$scope.clipHeightOffsetArray = clipHeightOffsetArray;
+			$scope.lengthArray = lengthArray;
+			$scope.idArray = idArray;
+			$scope.youtubeControl = {};
+			$scope.vidDB = [];
+			$scope.showContainer = "none";
+			$scope.vidDB_length = $scope.vidDB.length;
 	    }
 
+	    initializeScopeAttributes();
 
-	    $scope.queue = function (id, title) {
+
+	    $scope.pushToIDArray = function (id, title) {
 	      idArray.push(id);
 	      $log.info('Queued id:' + id + ' and title:' + title);
 	    };
@@ -165,9 +116,23 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 	      });
 	    }
 
-	    $scope.tabulate = function (state) {
-	      $scope.playlist = state;
-	    }
+	    // Populates necesary arrays.
+		// Creates video grid.
+		$scope.RunVidmixTest = function() {
+
+			populateClipHeightOffsetArray();
+			populateLengthArray();
+
+		}
+
+		$scope.$watch(function() {return VidFade.data.opacity}, function() {
+       		$scope.opacity = VidFade.data.opacity;
+       	})
+
+       	$scope.$watch(function() {return VidFade.data.vidDB}, function() {
+       		$scope.vidDB = VidFade.data.vidDB;
+       	})
+
     }])
 
 	.controller('VidCtrl', ['$scope', function($scope) {

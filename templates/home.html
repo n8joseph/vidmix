@@ -13,7 +13,7 @@
 	   </form>
 
 		<div id="results">
-		      <div class="video" data-ng-repeat="video in results" data-ng-click="queue(video.id, video.title)">
+		      <div class="video" data-ng-repeat="video in results" data-ng-click="pushToIDArray(video.id, video.title)">
 		        <img class="video-image" data-ng-src="{{ video.thumbnail }}">
 		        <p class="video-title">{{ video.title }}</p>
 		        <p class="video-author">{{ video.author }}</p>
@@ -57,7 +57,7 @@
 		<br/>
 
 		<button ng-click="tester()">tester</button>
-		<button ng-click="tester2()">CLICK FIRST</button>
+		<button ng-click="RunVidmixTest()">CLICK FIRST</button>
 		<button ng-click="tester3()">tester3</button>
 		<p>clip height offset for vid 2 (obj 1): {{ vidDB[1].clipHeightOffset }}</p>
 		<p>max total width {{ maxTotalWidth }}</p>
