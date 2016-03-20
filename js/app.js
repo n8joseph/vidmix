@@ -8,6 +8,7 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
       	var clipHeightOffsetArray = [];
        	var vidDB = [];
        	var maxTotalWidth = 0;
+       	initializeScopeAttributes();
        
 		var setMaxTotalWidth = function() {
 			if (VidFade.data.vidDB.length == idArray.length) {
@@ -30,7 +31,8 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 						clipHeightOffset: clipHeightOffsetArray[index],
 						fadeStartTime: 10,
 						opacity: 1,
-						success: true
+						success: true,
+						player: null
 					})
 					setMaxTotalWidth();
 				}
@@ -44,7 +46,8 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 						clipHeightOffset: clipHeightOffsetArray[index],
 						fadeStartTime: 10,
 						opacity: 1,
-						success: false
+						success: false,
+						player: null
 					})
 					setMaxTotalWidth();
 				}
@@ -71,9 +74,6 @@ angular.module('Vidmix', ['ui.router', 'vmLibrary'])
 			$scope.showContainer = "none";
 			$scope.vidDB_length = $scope.vidDB.length;
 	    }
-
-	    initializeScopeAttributes();
-
 
 	    $scope.pushToIDArray = function (id, title) {
 	      idArray.push(id);

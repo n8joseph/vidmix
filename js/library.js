@@ -45,8 +45,6 @@ angular.module('vmLibrary', [])
 		
 		return {
 			data : {
-				opacity : 1,
-				fadeGo : false,
 				vidDB : []
 			}
 		}
@@ -124,7 +122,8 @@ angular.module('vmLibrary', [])
 		      	// Bind mousedown event
 		      	elem.on('mousedown', function(e) {
 			        e.preventDefault();
-			        startX = e.clientX - elem[0].offsetLeft;
+			        startX = e.clientX - elem[0].offsetLeft; // starting position of the coursor.
+			        console.log("startX: " + startX);
 			        $document.on('mousemove', mousemove);
 			        $document.on('mouseup', mouseup);
 			        if (start) start(e);
@@ -132,7 +131,7 @@ angular.module('vmLibrary', [])
 
 		      	// Handle drag event
 		      	function mousemove(e) {
-			        curX = e.clientX - startX;
+			        curX = e.clientX - startX; // horizontal distance from the starting point of the cursor.
 			        setPosition();
 			        if (drag) drag(e);
 		      	}
@@ -147,6 +146,9 @@ angular.module('vmLibrary', [])
 		      	// Move element, within container if provided
 		      	function setPosition() {
 		        	if (container) {
+		        		console.log("container.left: " + container.left);
+		        		console.log("container.right:" + container.right); // less than the overall container??
+		        		console.log("curX: " + curX);
 		          		if (curX < container.left) {
 		            		curX = container.left - 8;
 		          		} 
@@ -195,6 +197,7 @@ angular.module('vmLibrary', [])
 
     			youTubeApiService.onReady(function() {
         			player = setupPlayer(scope, element);
+        			VidFade.data.vidDB[scope.index].player = player;
       			});
 
  
@@ -251,28 +254,44 @@ angular.module('vmLibrary', [])
 			    				if (event.data == YT.PlayerState.PLAYING) {
 			    					// Lower opacity when playback time equals stopPlayAt
 			    					var stopPlayAt = 3;
-			     	 				var time = player.getCurrentTime();
-			     	 				var nextVidIndex = Number(scope.index) - 1;
 
-			      					// Add .4 of a second to the time in case it's close to the current time
-			      					// (The API kept returning ~9.7 when hitting play after stopping at 10s)
-				      				if (time + .4 < stopPlayAt) {
-					        			var remainingTime = (stopPlayAt - time) / player.getPlaybackRate();
-								        setTimeout(adjustOpacityAndVolume, remainingTime * 1000);
+			     	 				setTimeout(beginVideoTransition, stopPlayAt * 1000);
+
+			      					function beginVideoTransition() {
+						        		adjustOpacityAndVolume();
+						        		kickOffNextVideo();
+							    	}
+
+				      				//$interval(increaseVolume, 1000, 100);
+
+				      				function increaseVolume() {
+				      					player.setVolume(player.getCurrentTime() * 10);
+				      				}
+
+				      				function decreaseVolume() {
+				      					player.setVolume(100 - (player.getCurrentTime() * 10) );
 				      				}
 
 				      				function adjustOpacityAndVolume() {
     									$interval(adjustOpacity, 1000, 100)
-    									$interval(adjustVolume, 1000, 100)
+    									$interval(decreaseVolume, 1000, 100)
 	 			 					}
-
 					 		
 			 						function adjustOpacity() {
-										VidFade.data.vidDB[scope.index].opacity = 1 - player.getCurrentTime() / 10;
+			 							var vidDBObj = VidFade.data.vidDB[scope.index];
+										vidDBObj.opacity = 1 - player.getCurrentTime() / 10;
+										if (vidDBObj.opacity <= 0)
+										{
+											player.pauseVideo();
+										}
 			 						}
 
-			 						function adjustVolume() {
-			 							player.setVolume(100 - (player.getCurrentTime() * 10) );
+			 						function kickOffNextVideo() {
+			 							if (scope.index - 1 >= 0) {
+			 								var nextPlayer = VidFade.data.vidDB[scope.index - 1].player;
+			 								nextPlayer.setVolume(100);
+			 								nextPlayer.playVideo();
+			 							}
 			 						}
       							}
             				}
